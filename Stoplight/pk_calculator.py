@@ -45,6 +45,7 @@ MODEL_DICT_INVERT = {v: key for key, val in MODEL_DICT.items() for v in val}
 
 CLASSIFICATION_DICT = {
     'Hepatic Stability': {
+        0: "Inconsistent result: no prediction",
         1: "Hepatic stability <= 50% at 15 minutes",
         2: "Hepatic stability <= 50% between 15 and 30 minutes",
         3: "Hepatic stability <= 50% between 30 and 60 minutes",
@@ -59,6 +60,7 @@ CLASSIFICATION_DICT = {
         1: "Tissue Hepatic Half-life <= 30 minutes"
     },
     'Renal Clearance': {
+        0: "Inconsistent result: no prediction",
         1: "Renal clearance below 0.10 ml/min/kg",
         2: "Renal clearance between 0.10 and 0.50 ml/min/kg",
         3: "Renal clearance between 0.50 and 1.00 ml/min/kg",
@@ -81,6 +83,7 @@ CLASSIFICATION_DICT = {
         1: "Weak/non plasma protein binder"
     },
     'Plasma Half-life': {
+        0: "Inconsistent result: no prediction",
         1: "Half-life below 1 hour",
         2: "Half-life between 1 and 6 hours",
         3: "Half-life between 6 and 12 hours",
@@ -91,6 +94,7 @@ CLASSIFICATION_DICT = {
         1: "Microsomal intrinsic clearance >= 12 uL/min/mg"
     },
     'Oral Bioavailability': {
+        0: "Inconsistent result: no prediction",
         1: "Less than 0.5 F",
         2: "Between 0.5 and 0.8 F",
         3: "Above 0.8 F"
@@ -194,15 +198,15 @@ def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
         if key in ['Hepatic Stability', 'Renal Clearance', 'Plasma Half-life', 'Oral Bioavailability']:
             new_pred = multiclass_ranking([_[0] for _ in val])
             if new_pred == 0:
-                processed_results.append([key, "Inconsistent result: no prediction", "Very unconfident", "NA", ""])
+                processed_results[key] = [2, "Inconsistent result: no prediction", "Very unconfident", "NA", "", "black"]
             else:
                 # this is because of how the hierarchical model works
                 if new_pred in [1, 2]:
                     p = 0
                 else:
                     p = new_pred - 2
-                processed_results[key] = [2, CLASSIFICATION_DICT[key][new_pred], val[p][1], val[p][2], "", ""]
+                processed_results[key] = [2, CLASSIFICATION_DICT[key][new_pred], val[p][1], val[p][2], "", "black"]
         else:
-            processed_results[key] = [2, CLASSIFICATION_DICT[key][val[0][0]], val[0][1], val[0][2], "", ""]
+            processed_results[key] = [2, CLASSIFICATION_DICT[key][val[0][0]], val[0][1], val[0][2], "", "black"]
 
     return processed_results

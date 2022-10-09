@@ -10,6 +10,7 @@ function downloadCSV(blob) {
     let url = window.URL.createObjectURL(blob);
     window.location.assign(url);
     URL.revokeObjectURL(url);
+    hideLoadingWrapper();
 }
 
 export function hideLoadingWrapper() {

@@ -29,28 +29,28 @@ MODEL_DICT = {
 
 OUTCOME_DICT = {
     'Firefly Luciferase interference': {
-        0: "Possible Interference",
-        1: "No Interference"
+        1: "Possible Interference",
+        0: "No Interference"
     },
     'Nano Luciferase interference': {
-        0: "Possible Interference",
-        1: "No Interference"
+        1: "Possible Interference",
+        0: "No Interference"
     },
     'Redox interference': {
-        0: "Possible Interference",
-        1: "No Interference"
+        1: "Possible Interference",
+        0: "No Interference"
     },
     'Thiol interference': {
-        0: "Possible Interference",
-        1: "No Interference"
+        1: "Possible Interference",
+        0: "No Interference"
     },
     'AmpC β-lactamase aggregation': {
-        0: "Putative aggregator",
-        1: "Non-aggregator"
+        1: "Putative aggregator",
+        0: "Non-aggregator"
     },
     'Cysteine protease cruzain aggregation': {
-        0: "Putative aggregator",
-        1: "Non-aggregator"
+        1: "Putative aggregator",
+        0: "Non-aggregator"
     }
 }
 

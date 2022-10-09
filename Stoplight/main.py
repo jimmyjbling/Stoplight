@@ -1,4 +1,11 @@
 from rdkit import Chem
+from .pk_calculator import CLASSIFICATION_DICT
+from .assay_liability_calculator import OUTCOME_DICT
+
+CLASSIFICATION_DICT.update(OUTCOME_DICT)
+
+# inverts the inner dicts of the classification dicts so outcome can be converted to numbers
+INVERSE_CLASS_DICT = {key2: {val: key for key, val in val2.items()} for key2, val2 in CLASSIFICATION_DICT.items()}
 
 MOLECULE_PROPERTY_SCORES = {
     'Solubility in Water (mg/L)': ([50, 10], "bigger"),
@@ -18,6 +25,7 @@ COLORS = {
     1: "#b09b2a",
     2: "red"
 }
+
 
 
 def get_prop_score(prop_name, prop_val):
