@@ -174,6 +174,7 @@ def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
     for model_endpoint, model_data in zip(models, models_data):
         if not default(MODEL_DICT_INVERT[os.path.basename(model_endpoint)], kwargs):
             continue
+
         with gzip.open(model_endpoint, 'rb') as f:
             model = cPickle.load(f)
 
@@ -186,9 +187,9 @@ def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
         if make_prop_img:
             svg_str = get_prob_map(model, smiles)
 
-        values.setdefault(MODEL_DICT_INVERT[os.path.basename(model_endpoint)], []).append([int(pred), str(round(float(pred_proba) * 100, 2)) + "%", AD_DICT[ad], svg_str])
+        values.setdefault(MODEL_DICT_INVERT[os.path.basename(model_endpoint)], []).append([int(pred), str(round(float(pred_proba) * 100, 2)) + "%", AD_DICT[ad]])
 
-    processed_results = []
+    processed_results = {}
     for key, val in values.items():
         if key in ['Hepatic Stability', 'Renal Clearance', 'Plasma Half-life', 'Oral Bioavailability']:
             new_pred = multiclass_ranking([_[0] for _ in val])
@@ -200,8 +201,8 @@ def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
                     p = 0
                 else:
                     p = new_pred - 2
-                processed_results.append([key, CLASSIFICATION_DICT[key][new_pred], val[p][1], val[p][2], val[p][3]])
+                processed_results[key] = [2, CLASSIFICATION_DICT[key][new_pred], val[p][1], val[p][2], "", ""]
         else:
-            processed_results.append([key, CLASSIFICATION_DICT[key][val[0][0]], val[0][1], val[0][2], val[0][3]])
+            processed_results[key] = [2, CLASSIFICATION_DICT[key][val[0][0]], val[0][1], val[0][2], "", ""]
 
     return processed_results

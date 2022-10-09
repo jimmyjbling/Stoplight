@@ -3,8 +3,10 @@ from rdkit.Chem import Descriptors, Crippen, Lipinski
 from collections import namedtuple
 import numpy as np
 import pickle
+import os
 
-MODEL = pickle.load(open("./static/esol_model.pkl", 'rb'))
+print(os.getcwd())
+MODEL = pickle.load(open("./Stoplight/models/esol_model.pkl", 'rb'))
 AROMATIC_QUERY = Chem.MolFromSmarts("a")
 Descriptor = namedtuple("Descriptor", "mw logp rotors ap")
 
@@ -68,5 +70,9 @@ def calc_esol_xgbmodel(mol):
     return esol
 
 
-def calc_esol(mol):
-    return {'Solubility in Water (mg/L)': calc_esol_xgbmodel(mol)}
+def calc_esol(smiles, options):
+    def get_value(value_func, mol):
+        return round(value_func(mol), int(options['precision']))
+
+    mol = Chem.MolFromSmiles(smiles)
+    return {'Solubility in Water (mg/L)': [0, get_value(calc_esol_xgbmodel, mol), "", ""]}

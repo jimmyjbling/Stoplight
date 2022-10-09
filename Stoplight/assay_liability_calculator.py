@@ -125,15 +125,15 @@ def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
         if not default(MODEL_DICT[os.path.basename(model)], kwargs):
             continue
         with open(model, 'rb') as f:
-            model = pickle.load(f)
+            m = pickle.load(f)
 
         # for now I have no AD data so we are just doing this
-        pred, pred_proba, ad = run_prediction(model, None, smiles, calculate_ad=False)
+        pred, pred_proba, ad = run_prediction(m, None, smiles, calculate_ad=False)
 
         svg_str = ""
         if make_prop_img:
-            svg_str = get_prob_map(model, smiles)
+            svg_str = get_prob_map(m, smiles)
 
-        values.setdefault(MODEL_DICT[os.path.basename(model)], []).append([OUTCOME_DICT[MODEL_DICT[os.path.basename(model)]][int(pred)], str(round(float(pred_proba) * 100, 2)) + "%", "", svg_str])
+        values[MODEL_DICT[os.path.basename(model)]] = [1, OUTCOME_DICT[MODEL_DICT[os.path.basename(model)]][int(pred)], str(round(float(pred_proba) * 100, 2)) + "%", "NA"]
 
     return values

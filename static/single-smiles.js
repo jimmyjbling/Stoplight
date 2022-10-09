@@ -4,24 +4,26 @@ import { clearErrorMessage, displayError } from "./error.js";
 
 const form = document.getElementById('single-smiles-form');
 const smilesInput = document.getElementById('smiles-input');
+const loadingWrapper = document.querySelector('.loading-wrapper');
 
 function resetElements() {
     hideMoleculeWrapper();
     clearErrorMessage();
 }
 
-const setVisible = (elementOrSelector, visible) =>
-  (typeof elementOrSelector === 'string'
-    ? document.querySelector(elementOrSelector)
-    : elementOrSelector
-  ).style.display = visible ? 'block' : 'none';
+export function showLoadingWrapper() {
+    if (loadingWrapper.className.includes('hidden')) {
+        loadingWrapper.classList.remove('hidden');
+    }
+}
 
 form.onsubmit = (event) => {
     event.preventDefault();
 
     resetElements();
 
-    setVisible('#loading', true);
+    showLoadingWrapper();
+    loadingWrapper.scrollIntoView({behavior:"smooth"});
 
     fetch('/smiles', {
         method: 'POST',

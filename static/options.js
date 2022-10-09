@@ -29,13 +29,13 @@ function hideOptions() {
 openButton.addEventListener('click', showOptions);
 closeButton.addEventListener('click', hideOptions);
 
-function addMoleculePropertyOption(name) {
+function addMoleculePropertyOption(name, checked) {
     let wrapper = document.createElement('div');
     wrapper.className = 'option-item custom-control custom-checkbox mb-3';
 
     let checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = true;
+    checkbox.checked = checked === 1;
     checkbox.name = name;
     checkbox.id = name;
     checkbox.classList.add('custom-control-input');
@@ -51,8 +51,25 @@ function addMoleculePropertyOption(name) {
 }
 
 export function displayMoleculePropertyOptions(propNames) {
-    for (const propName of propNames) {
-        addMoleculePropertyOption(propName);
+    let groupOne = document.createElement('p');
+    groupOne.innerHTML = "Molecular Properties"
+    optionsForm.append(groupOne);
+    for (const prop of propNames.mp) {
+        addMoleculePropertyOption(prop, 1);
+    }
+
+    let groupTwo = document.createElement('p');
+    groupTwo.innerHTML = "Assay Liabilities"
+    optionsForm.append(groupTwo);
+    for (const prop of propNames.al) {
+        addMoleculePropertyOption(prop, 0);
+    }
+
+    let groupThree = document.createElement('p');
+    groupThree.innerHTML = "PK Properties"
+    optionsForm.append(groupThree);
+    for (const prop of propNames.pk) {
+        addMoleculePropertyOption(prop, 0);
     }
 }
 

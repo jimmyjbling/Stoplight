@@ -1,50 +1,108 @@
 const moleculeWrapper = document.querySelector('.molecule-wrapper');
-const stoplightWrapper = document.querySelector('.stoplight-wrapper');
 const moleculeProperties = document.querySelector('.molecule-properties');
 const moleculeSVG = document.getElementById('molecule-svg');
-const moleculeStoplight = document.getElementById('stoplight-svg');
 const moleculeSMILES = document.getElementById('molecule_smile_string');
-
-
-function addMolecularPropertyElement(name, value, score, color) {
-    let element = document.createElement('span');
-    element.class = 'molecular-property';
-
-    element.innerHTML = `${name} <p style="color:${color};">${value} | Score: ${score}</p>`;
-    moleculeProperties.append(element);
-}
+const loadingWrapper = document.querySelector('.loading-wrapper');
+const stopLight = document.getElementById("stoplight-svg");
+const resDisply = document.getElementById("display-4");
 
 export function showMoleculeWrapper() {
     if (moleculeWrapper.className.includes('hidden')) {
         moleculeWrapper.classList.remove('hidden');
     }
 }
+
 export function hideMoleculeWrapper() {
     if (!moleculeWrapper.className.includes('hidden')) {
         moleculeWrapper.classList.add('hidden');
     }
 }
 
-export function showStoplightWrapper() {
-    if (stoplightWrapper.className.includes('hidden')) {
-        stoplightWrapper.classList.remove('hidden');
-    }
-}
-export function hideStoplightWrapper() {
-    if (!stoplightWrapper.className.includes('hidden')) {
-        stoplightWrapper.classList.add('hidden');
+export function hideLoadingWrapper() {
+    if (!loadingWrapper.className.includes('hidden')) {
+        loadingWrapper.classList.add('hidden');
     }
 }
 
 export function displayMoleculeCard(moleculeData) {
+    hideLoadingWrapper();
     showMoleculeWrapper();
-    showStoplightWrapper();
+
     moleculeProperties.innerHTML = '';
     moleculeSMILES.innerHTML = moleculeData.SMILES;
     moleculeSVG.innerHTML = moleculeData.svg;
-    moleculeStoplight.innerHTML = moleculeData.stoplight
+    stopLight.innerHTML = moleculeData.stoplight;
+    resDisply.innerHTML = `Result: Overall score ${moleculeData.overall}`;
 
-    for (const [propName, value, score, color] of moleculeData.molProperties) {
-        addMolecularPropertyElement(propName, value, score, color);
+    let groupNum = -1;
+    let groupChange = -1;
+
+    for (const [modelName, gnum, classification, confidence, ad, score, color] of moleculeData.molProperties) {
+
+        if (groupNum === -1) {
+            groupNum = gnum;
+            groupChange = 1;
+        }
+
+        if (groupNum !== gnum) {
+            groupNum = gnum;
+            groupChange = 1;
+        }
+
+        if (groupChange === 1) {
+            if (groupNum === 0) {
+                let propHeader = document.createElement('h5');
+                propHeader.classList.add("prop-class-header");
+                propHeader.innerHTML = "Molecular Properties";
+                moleculeProperties.append(propHeader);
+                groupChange = 0;
+            }
+            if (groupNum === 1) {
+                let propHeader = document.createElement('h5');
+                propHeader.classList.add("prop-class-header");
+                propHeader.innerHTML = "Assay Liabilities";
+                moleculeProperties.append(propHeader);
+                groupChange = 0;
+            }
+            if (groupNum === 2) {
+                let propHeader = document.createElement('h5');
+                propHeader.classList.add("prop-class-header");
+                propHeader.innerHTML = "PK Properties";
+                moleculeProperties.append(propHeader);
+                groupChange = 0;
+            }
+        }
+
+        let wrapper = document.createElement('div');
+        wrapper.className = 'option-item custom-control custom-checkbox mb-3';
+
+        let information = document.createElement('span');
+        information.id = modelName;
+        information.classList.add('model-preds');
+
+        if (confidence === "") {
+            information.innerHTML = `<span>${modelName}: <span style="color:${color};">${classification}</span> | Score: ${score}</span>`;
+        } else {
+            if (ad === "") {
+                if (score === "") {
+                    information.innerHTML = `<span>${modelName}: <span style="color:${color};">${classification}</span> | Confidence: ${confidence}</span>`;
+                } else {
+                    information.innerHTML = `<span>${modelName}: <span style="color:${color};">${classification}</span> | Confidence: ${confidence} | Score: ${score}</span>`;
+                }
+            } else {
+                if (score === "") {
+                    information.innerHTML = `<span>${modelName}: <span style="color:${color};">${classification}</span> | Confidence: ${confidence} | Applicability Domain: ${ad}</span>`;
+                } else {
+                    information.innerHTML = `<span>${modelName}: <span style="color:${color};">${classification}</span> | Confidence: ${confidence} | Applicability Domain: ${ad} | Score: ${score}</span>`;
+                }
+            }
+        }
+
+        // let line_break = document.createElement('hr')
+        // line_break.classList.add("style1")
+        // information.append(line_break)
+
+        wrapper.append(information);
+        moleculeProperties.append(wrapper);
     }
 }
