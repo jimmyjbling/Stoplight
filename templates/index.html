@@ -32,7 +32,10 @@
 </head>
 <body data-new-gr-c-s-check-loaded="8.904.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="8.904.0">
     <main id="content">
-        <h1 class="display-4" id="title">STOPLIGHT: A Hit Scoring Calculator</h1>
+        <div id="web-header-content">
+            <img src="./static/logo_main_large_text2.png" alt="" style="float: left; height: 100px; padding: 5px;">
+            <h1 class="display-4" id="title" style="vertical-align: middle; line-height: 100px;">STOPLIGHT: A Hit Scoring Calculator</h1>
+        </div>
         <p>This is an online web portal to score and predict compounds properties following the STOPLIGHT approach from PAPERLINK. To use, enter SMILE in the box below, or draw a compound and hit load SMILES, then click "Get Properties". Results will appear below. By default all models for all endpoints will be run. You can choose to turn off certain endpoints in the options sidebar. Fragment contribution maps are generated with RDKit. To turn on the maps, check the "Display contribution maps" in the options sidebar. It defaults to off because the maps will increase the runtime significantly, so if using please be patient</p>
         <p>Please note that this calculator works best when used to score and rank enriched small libraries. Using it to pre-screen very large virtual libraries can result in a large number of false negatives</p>
         <p>Click <a href="../score-cutoff" target="popup" onclick="window.open('../score-cutoff','popup','width=300,height=300'); return false;">here</a> to see a table of score cutoffs for each property</p>
