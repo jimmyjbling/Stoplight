@@ -27,7 +27,6 @@ COLORS = {
 }
 
 
-
 def get_prop_score(prop_name, prop_val):
     score_range, order = MOLECULE_PROPERTY_SCORES[prop_name]
     if order == "smaller":

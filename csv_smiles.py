@@ -3,6 +3,13 @@ from io import StringIO
 import csv
 from Stoplight.main import get_stoplight, INVERSE_CLASS_DICT
 
+def _stoplight_colors(val):
+    if val == 0:
+        return "green"
+    if 0 < val <= 1.0:
+        return "yellow"
+    if 1.0 < val <= 2.0:
+        return "red"
 
 def get_csv_from_smiles(smiles_list, options):
     # CSV writer expects a file object, not a string.
@@ -20,7 +27,7 @@ def get_csv_from_smiles(smiles_list, options):
     headers = headers + prob_headers + ad_headers
 
     string_file = StringIO()
-    writer = csv.DictWriter(string_file, fieldnames=['SMILES', *headers, "OverallScore"])
+    writer = csv.DictWriter(string_file, fieldnames=['SMILES', *headers, "OverallScore", "StoplightColor"])
     writer.writeheader()
 
     # loop through all the smiles
@@ -48,12 +55,13 @@ def get_csv_from_smiles(smiles_list, options):
                     row[prop_name + "_prob"] = float(pred_proba[:-1]) / 100  # covert back to 0-1 float
                 except ValueError:
                     row[prop_name] = "NA"  # if pred_proba is string skip
-                    row[prop_name + "_prob"] = "NA"  # covert back to 0-1 float
+                    row[prop_name + "_prob"] = "NA"
                 row[prop_name + "_AD"] = ad
             else:
                 row[prop_name] = pred
 
         row["OverallScore"] = overall_score
+        row["StoplightColor"] = _stoplight_colors(overall_score)
         writer.writerow(row)
 
     return string_file.getvalue()
