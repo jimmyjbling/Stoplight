@@ -62,6 +62,10 @@ export function displayMoleculeCard(moleculeData) {
                 propHeader.classList.add("prop-class-header");
                 propHeader.innerHTML = "Assay Liabilities";
                 moleculeProperties.append(propHeader);
+                let conHeader = document.createElement('span');
+                conHeader.classList.add("model-preds");
+                conHeader.innerHTML = `<strong>Liability Consensus: ${moleculeData.assayCon}</strong>`;
+                moleculeProperties.append(conHeader);
                 groupChange = 0;
             }
             if (groupNum === 2) {
@@ -91,9 +95,9 @@ export function displayMoleculeCard(moleculeData) {
                 }
             } else {
                 if (score === "") {
-                    information.innerHTML = `<span>${modelName}: <span style="color:${color};">${classification}</span> | Confidence: ${confidence} | Applicability Domain: ${ad}</span>`;
+                    information.innerHTML = `<span>${modelName}: <span style="color:${color};">${classification}</span> | Confidence: ${confidence} | AD: ${ad}</span>`;
                 } else {
-                    information.innerHTML = `<span>${modelName}: <span style="color:${color};">${classification}</span> | Confidence: ${confidence} | Applicability Domain: ${ad} | Score: ${score}</span>`;
+                    information.innerHTML = `<span>${modelName}: <span style="color:${color};">${classification}</span> | Confidence: ${confidence} | AD: ${ad} | Score: ${score}</span>`;
                 }
             }
         }
