@@ -22,7 +22,7 @@ def get_molecule_data_from_smiles(smiles_str, options):
 
     if len(assay_conensus) > 0:
         _vals = [float(_) for _ in assay_conensus if assay_conensus != "NA"]
-        assay_conensus = sum(_vals) / len(_vals) if len(_vals) > 0 else "NA"
+        assay_conensus = 1 - (sum(_vals) / len(_vals)) if len(_vals) > 0 else "NA"
     else:
         assay_conensus = -1
 
