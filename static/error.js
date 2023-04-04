@@ -2,7 +2,10 @@ const errorMessage = document.getElementById('error-message');
 const errorWrapper = document.querySelector('.error-wrapper');
 const smilesInput = document.getElementById('smiles-input');
 const smilesForm = document.getElementById('single-smiles-form');
+const smilesCSVText = document.getElementById('multi-smiles')
+const smilesCSV = document.getElementById('multi-smiles-form')
 const loadingWrapper = document.querySelector('.loading-wrapper');
+
 
 function displayClientError(err) {
     errorMessage.innerHTML = `<b>Unexpected Client Error</b> ${err}`;
@@ -21,9 +24,9 @@ function displayServerError(err) {
         smilesInput.classList.add('is-invalid');
         smilesForm.classList.add('has-danger');
     } else if (err.status === 413) {
-        errorMessage.innerHTML = `To many models and SMILES use the <a href="https://github.com/molecularmodelinglab/ZincRx">local version</a> instead`;
-        smilesInput.classList.add('is-invalid');
-        smilesForm.classList.add('has-danger');
+        errorMessage.innerHTML = `To many SMILES use the <a href="https://github.com/jimmyjbling/Stoplight">local version</a> instead`;
+        smilesCSVText.classList.add('is-invalid');
+        smilesCSV.classList.add('has-danger');
     } else {
         errorMessage.innerHTML = `<b>Unexpected Server Error</b> (${err.status}): ${err.statusText}`;
     }
@@ -37,6 +40,11 @@ export function clearErrorMessage() {
     if (smilesForm.className.includes('has-danger')) {
         smilesForm.classList.remove('has-danger');
         smilesInput.classList.remove('is-invalid');
+    }
+
+    if (smilesCSV.className.includes('has-danger')) {
+        smilesCSV.classList.remove('has-danger');
+        smilesCSVText.classList.remove('is-invalid');
     }
 }
 

@@ -47,7 +47,13 @@ def smiles():
 def smiles_csv():
     print("csv")
 
-    csv = get_csv_from_smiles(request.json.get('smiles'), request.json.get('options'))
+    _smiles = request.json.get('smiles')
+
+    if len(_smiles) > 1000:
+        return abort(413)
+
+    print("here")
+    csv = get_csv_from_smiles(_smiles, request.json.get('options'))
 
     return Response(
         csv,

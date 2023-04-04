@@ -4,7 +4,7 @@ import { displayError, clearErrorMessage } from "./error.js";
 const form = document.getElementById('multi-smiles-form')
 const textArea = document.getElementById('multi-smiles')
 const smilesFile = document.getElementById('smiles-file')
-const loadingWrapper = document.querySelector('.loading-wrapper-csv');
+const loadingWrapper = document.querySelector('.loading-wrapper');
 
 function downloadCSV(blob) {
     let url = window.URL.createObjectURL(blob);
@@ -43,6 +43,11 @@ smilesFile.addEventListener('change', () => {
 
     reader.onerror = (event) => alert(event.target.error.name);
     reader.readAsText(file)
+
+});
+
+textArea.addEventListener('change', () => {
+    smilesFile.value = null;
 });
 
 form.onsubmit = (event) => {
