@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stoplight</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Custom -->
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/error.js" type="module"></script>
+    <script src="/static/molecule-card.js" type="module"></script>
+    <script src="/static/options.js" type="module" defer></script>
+    <script src="/static/single-smiles.js" type="module" defer></script>
+    <script src="/static/smiles-csv.js" type="module" defer></script>
+    <script src="/static/load-jme.js" type="module" defer></script>
+
+    <!-- favicon stuff -->
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Argon Design System -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/argon-design-system-free@1.2.0/assets/css/nucleo-icons.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link type="text/css" href="https://cdn.jsdelivr.net/npm/argon-design-system-free@1.2.0/assets/css/argon-design-system.min.css" rel="stylesheet">
+
+    <script type="text/javascript" language="javascript" src="static/jsme/jsme.nocache.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.5/perfect-scrollbar.min.js" integrity="sha512-X41/A5OSxoi5uqtS6Krhqz8QyyD8E/ZbN7B4IaBSgqPLRbWVuXJXr9UwOujstj71SoVxh5vxgy7kmtd17xrJRw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://unpkg.com/@popperjs/core@2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/argon-design-system-free@1.2.0/assets/js/argon-design-system.min.js" defer></script>
+
+
+</head>
+<body data-new-gr-c-s-check-loaded="8.904.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="8.904.0">
+    <main id="content">
+        <div id="web-header-content">
+            <img src="./static/logo_main_large_text2.png" alt="" style="float: left; height: 100px; padding: 5px;">
+            <h1 class="display-4" id="title" style="vertical-align: middle; line-height: 100px;">STOPLIGHT: A Hit Scoring Calculator</h1>
+        </div>
+        <p style="font-size: 20px">This is an online web portal to score and predict compounds properties following the STOPLIGHT approach from PAPERLINK. To use, enter SMILE in the box below, or draw a compound and hit load SMILES, then click "Get Properties". Results will appear below. You can choose desired properties below in the option sidebar. You can find a offline program for STOPLIGHT <a href="https://github.com/jimmyjbling/Stoplight">here</a>.</p>
+        <div>
+            <form action="/score-description">
+                <strong style="font-size: 20px">To see a description of how stoplight works and calculates it scores:&nbsp;&nbsp;&nbsp;</strong>
+                <button class="btn btn-default" type="submit">Click here</button>
+            </form>
+        </div>
+
+        <div>
+            <p></p>
+            <p>Please note that this calculator works best when used to score and rank enriched small libraries. Using it to pre-screen very large virtual libraries can result in a large number of false negatives. While this website does not collect or save data on SMILES strings, we advise against its use for proprietary compounds. Please contact alex_tropsha@unc.edu with questions.</p>
+        </div>
+
+        <div id="forms-wrapper">
+            <div class="search-wrapper">
+                <div class="single-search-wrapper">
+                    <div class="form-wrapper">
+                        <form id="single-smiles-form" class="smiles-form">
+                            <div class="input-group">
+                                <input class="form-control" type="text" id="smiles-input" placeholder="Enter SMILES" value="">
+                            </div>
+                            <button class="btn btn-default" title="Get properties of molecule from SMILES string." type="submit">
+                                Get Properties
+                            </button>
+                        </form>
+                        <div class="error-wrapper-input hidden">
+                            <p id="error-message-input" style="color: red"></p>
+                        </div>
+                    </div>
+                </div>
+                <hr class="style1">
+                <div class="multi-search-wrapper">
+                    <p>You can also generate a CSV of the results by entering compounds below, seperated by commas or new lines. If number of SMILES > 1000 use the <a href="https://github.com/jimmyjbling/Stoplight">local standalone calculator</a> instead of this webserver.</p>
+                    <form id="multi-smiles-form" class="smiles-form">
+                        <textarea class="form-control" id="multi-smiles" cols="30" rows="5" placeholder="Enter multiple SMILES strings as a comma or new line separated list and generate a .csv file."></textarea>
+                        <input class="form-control" type="file" id="smiles-file">
+                        <p>When uploading a SMILES file make sure smiles are newline seperated (for example a csv with one column and each row is a SMILES). Uploaded files will auto-populate the text area, wait to generate csv until you see them in the box.</p>
+                        <div class="hidden loading-wrapper-csv" style="text-align: center;"><img src="https://i.stack.imgur.com/MnyxU.gif" alt="LOADING..."></div>
+                        <button class="btn btn-default" title="Generate a CSV file containing molecular properties from multiple SMILES strings" type="submit">
+                            <i class="ni ni-cloud-download-95"></i>Generate CSV
+                        </button>
+                        <h5>CSV generation does not work on Safari; Use Chrome, Edge or Firefox</h5>
+                    </form>
+                </div>
+                <div class="error-wrapper hidden">
+                    <p id="error-message"></p>
+                </div>
+                <div class="hidden loading-wrapper" style="text-align: center;"><img src="https://i.stack.imgur.com/MnyxU.gif" alt="LOADING..."></div>
+            </div>
+            <div class="options-wrapper">
+                <div class="jme-wrapper">
+                    <form id="draw-smiles-form" class="draw-form">
+                        <div code="JME.class" name="JME" archive="JME.jar" width="360" height="315" id="JME">You have to enable JavaScript in your browser to use JSME! </div>
+                        <div class="load_smiles_button">
+                            <p></p>
+                            <button class="btn btn-default" title="Get SMILES From JSME" type="submit">
+                                Load SMILES
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div><p></p></div>
+                <div class="options-sidebar" style="overflow-y:scroll; height: 600px">
+                    <div class="options-icons">
+                        <i id="options-dropdown-open" class="options-dropdown ni ni-bold-down"></i>
+                        <i id="options-dropdown-close" class="hidden options-dropdown ni ni-bold-up"></i>
+                        <i class="ni ni-settings-gear-65"></i>
+                    </div>
+                    <form id="search-options">
+                        <p>Model Options</p>
+                        <div class="option-item option-item-number">
+                            <label for="float-precision">Float Precision</label>
+                            <input class="form-control form-control-sm" id="float-precision" type="number" name="precision" value="2">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="hidden molecule-wrapper">
+                <h4 class="display-4" id="display-4"></h4>
+                <div class="res-header">
+                    <div class="compound-info">
+                        <div id="molecule_smile_string" style="font-weight: bolder; font-size: 16px"></div>
+                        <div id="molecule-svg" style="width: 100%; height: 100%; display: flex"></div>
+                    </div>
+                    <div class="stoplight-svg" id="stoplight-svg"></div>
+                </div>
+                <div class="prop-info">
+                    <div class="molecule-properties" id="dummy-preds"></div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <p style="color: #a5a3a3">Developed by James Wellnitz of the <a href="https://molecularmodelinglab.github.io/">MML @ UNC</a></p>
+              <p style="color: #a5a3a3">Supported by the National Institute of General Medical Sciences of the National Institutes of Health under Award Number T32GM135122 and National Institute of Allergy and Infectious Diseases of the National Institutes of Health under Award Number U19AI171292. The content is solely the responsibility of the authors and does not necessarily represent the official views of National Institutes of Health</p>
+              <p style="color: #a5a3a3">&copy; 2023, all rights reserved</p>
+        </div>
+    </main>
+</body>
+</html>
