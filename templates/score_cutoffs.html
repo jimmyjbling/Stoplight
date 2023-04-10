@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score Cutoffs</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Custom -->
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/error.js" type="module"></script>
+    <script src="/static/molecule-card.js" type="module"></script>
+    <script src="/static/options.js" type="module" defer></script>
+    <script src="/static/single-smiles.js" type="module" defer></script>
+    <script src="/static/smiles-csv.js" type="module" defer></script>
+    <script src="/static/load-jme.js" type="module" defer></script>
+
+    <!-- favicon stuff -->
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Argon Design System -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/argon-design-system-free@1.2.0/assets/css/nucleo-icons.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link type="text/css" href="https://cdn.jsdelivr.net/npm/argon-design-system-free@1.2.0/assets/css/argon-design-system.min.css" rel="stylesheet">
+
+    <script type="text/javascript" language="javascript" src="static/jsme/jsme.nocache.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.5/perfect-scrollbar.min.js" integrity="sha512-X41/A5OSxoi5uqtS6Krhqz8QyyD8E/ZbN7B4IaBSgqPLRbWVuXJXr9UwOujstj71SoVxh5vxgy7kmtd17xrJRw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://unpkg.com/@popperjs/core@2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/argon-design-system-free@1.2.0/assets/js/argon-design-system.min.js" defer></script>
+
+
+</head>
+<body data-new-gr-c-s-check-loaded="8.904.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="8.904.0">
+    <main id="content">
+        <div id="web-header-content">
+            <form action="/">
+                <img src="./static/logo_main_large_text2.png" alt="" style="float: left; height: 100px; padding: 5px;">
+                <button class="btn btn-default" type="submit" style="float: right; padding: 10px">Back to App</button>
+                <h1 class="display-4" id="title" style="vertical-align: middle; line-height: 100px;">STOPLIGHT: Descriptions of Stoplight Score</h1>
+            </form>
+        </div>
+        <div>
+            <p>
+                Like golf, the STOPLIGHT scores are inverted, ei smaller scores are better, larger are worse. This score
+                is an equal weighted average of all scores assigned to a predicted/calculated properties.
+                For any individual property a discrete score of 0, 1, or 2 is assigned based on a series of established
+                cutoffs gathered from literature and standard practices (see below).
+                STOPLIGHT will assign a traffic color to a compound following the below cutoffs for the overall average:
+            </p>
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">0</th>
+                        <th scope="col">1</th>
+                        <th scope="col">2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th style="background-color: green; color: white">Green</th>
+                        <th style="background-color: #b09b2a; color: white">Yellow</th>
+                        <th style="background-color: red; color: white">Red</th>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Note that only properties turned on in
+                the model options sidebar will be considered when calculating scores. This can change the score of compounds
+                if different properties are considered.
+            </p>
+            <span>
+                <strong>Only molecular properties and assay liabilities are scored.</strong> This is due to PK property values generally
+                having campaign specific goals. You can assign your own weighting using the output CSV if desired
+            </span>
+        </div>
+        <hr class="style1">
+        <div>
+            <h3>Molecular property scores</h3>
+            <span>
+                The cutoffs for the six molecular properties are gathered from <a href="https://pubs.acs.org/doi/10.1021/acs.jmedchem.9b01596">literature</a>. They are enumerated below.
+                Scores can be 0, 1, or 2. 0 means no penalty, 1 is minor penalty and 2 is major penalty. All 6 properties are weighted equally
+            </span>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Property</th>
+                        <th scope="col">0</th>
+                        <th scope="col">1</th>
+                        <th scope="col">2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Solubility in water</th>
+                        <td>>=50</td>
+                        <td>10-50</td>
+                        <td><10</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">LogP</th>
+                        <td><2</td>
+                        <td>2-3</td>
+                        <td>>3</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Molecular Weight</th>
+                        <td><=400</td>
+                        <td>400-500</td>
+                        <td>>500</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">PSA</th>
+                        <td><=120</td>
+                        <td>120-140</td>
+                        <td>>140</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Num rotatable bonds</th>
+                        <td><=7</td>
+                        <td>8-10</td>
+                        <td>>=11</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">FSP3</th>
+                        <td>>0.3</td>
+                        <td>0.2-0.3</td>
+                        <td><0.2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr class="style1">
+                <div>
+            <h3>Assay liability scores</h3>
+            <span>
+                Some compounds can interfere with assay reporting, making them assay liabilities. STOPLIGHT can predict if compounds are liabilities using models published in <a href="https://doi.org/10.26434/chemrxiv-2023-r78sj">literature</a>.
+                Currently, models exist for 6 types of interference.
+                Note that these are predictions, and their accuracy is not 100% (see original <a href="https://doi.org/10.26434/chemrxiv-2023-r78sj">publication</a> for assessment of accuracy).
+                As a result, compounds with predicted liability will be scored as a 1, and compounds without scored as a 0. Currently, compounds cannot be scored a 2 in this category.
+            </span>
+                    <p>
+                        A consensus liability score is generated by averaging each liability model's predicted probability
+                        that given compound is a liability. Thus, just like the STOPLIGHT score this score is inverted; a
+                        consensus score near or at 0 means no liability and a score near or at 1 liability.
+                    </p>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Property</th>
+                        <th scope="col">0</th>
+                        <th scope="col">1</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">AmpC B aggregation</th>
+                        <td>no aggregation</td>
+                        <td>aggregation</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Cruzain aggregation</th>
+                        <td>no aggregation</td>
+                        <td>aggregation</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Firefly Luc interference</th>
+                        <td>no interference</td>
+                        <td>interference</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Nano Luc interference</th>
+                        <td>no interference</td>
+                        <td>interference</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Redox interference</th>
+                        <td>no interference</td>
+                        <td>interference</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Thiol interference</th>
+                        <td>no interference</td>
+                        <td>interference</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <p style="color: #a5a3a3">Developed by James Wellnitz of the <a href="https://molecularmodelinglab.github.io/">MML @ UNC</a></p>
+              <p style="color: #a5a3a3">Supported by the National Institute of General Medical Sciences of the National Institutes of Health under Award Number T32GM135122 and National Institute of Allergy and Infectious Diseases of the National Institutes of Health under Award Number U19AI171292. The content is solely the responsibility of the authors and does not necessarily represent the official views of National Institutes of Health</p>
+              <p style="color: #a5a3a3">&copy; 2023, all rights reserved</p>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, abort, Response, jsonify
+
+from Stoplight.main import is_smiles
 from smiles import get_molecule_data_from_smiles
 from csv_smiles import get_csv_from_smiles
 from Stoplight.assay_liability_calculator import MODEL_DICT as AL_MODEL_DICT
@@ -25,10 +27,23 @@ def score_cutoff():
     return render_template('score_table.html')
 
 
+@app.route('/score-description')
+def score_description():
+    print("cutoff")
+    return render_template('score_cutoffs.html')
+
+
 @app.route('/endpoints', methods=['GET'])
 def mol_properties():
     print("endpoints")
     return jsonify(ALL_PROPS), 200
+
+
+@app.route('/check_smiles', methods=['POST'])
+def check_smiles():
+    _tmp = {"is_smile": int(is_smiles(request.json.get('smiles')))}
+    print(_tmp)
+    return _tmp
 
 
 @app.route('/smiles', methods=['POST'])

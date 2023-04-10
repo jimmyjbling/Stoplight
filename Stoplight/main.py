@@ -179,3 +179,9 @@ def get_stoplight(smiles, options):
         overall_score = None
 
     return results, overall_score
+
+
+def is_smiles(smi):
+    if smi == "":
+        return True
+    return True if Chem.MolFromSmiles(smi) is not None else False

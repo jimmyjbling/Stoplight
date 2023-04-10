@@ -47,27 +47,39 @@
             <img src="./static/logo_main_large_text2.png" alt="" style="float: left; height: 100px; padding: 5px;">
             <h1 class="display-4" id="title" style="vertical-align: middle; line-height: 100px;">STOPLIGHT: A Hit Scoring Calculator</h1>
         </div>
-        <p>This is an online web portal to score and predict compounds properties following the STOPLIGHT approach from PAPERLINK. To use, enter SMILE in the box below, or draw a compound and hit load SMILES, then click "Get Properties". Results will appear below. By default all models for all endpoints will be run. You can choose to turn off certain endpoints in the options sidebar. Fragment contribution maps are generated with RDKit. To turn on the maps, check the "Display contribution maps" in the options sidebar. It defaults to off because the maps will increase the runtime significantly, so if using please be patient</p>
-        <p>Please note that this calculator works best when used to score and rank enriched small libraries. Using it to pre-screen very large virtual libraries can result in a large number of false negatives</p>
-        <p>Click <a href="../score-cutoff" target="popup" onclick="window.open('../score-cutoff','popup','width=300,height=300'); return false;">here</a> to see a table of score cutoffs for each property</p>
-        <p>While this website does not collect or save data on SMILES strings, we advise against its use for proprietary compounds. Please contact Alex Tropsha (alex_tropsha@unc.edu) and Eugene Muratov (murik@email.unc.edu) with questions.</p>
+        <p style="font-size: 20px">This is an online web portal to score and predict compounds properties following the STOPLIGHT approach from PAPERLINK. To use, enter SMILE in the box below, or draw a compound and hit load SMILES, then click "Get Properties". Results will appear below. You can choose desired properties below in the option sidebar. You can find a offline program for STOPLIGHT <a href="https://github.com/jimmyjbling/Stoplight">here</a>.</p>
+        <div>
+            <form action="/score-description">
+                <strong style="font-size: 20px">To see a description of how stoplight works and calculates it scores:&nbsp;&nbsp;&nbsp;</strong>
+                <button class="btn btn-default" type="submit">Click here</button>
+            </form>
+        </div>
+
+        <div>
+            <p></p>
+            <p>Please note that this calculator works best when used to score and rank enriched small libraries. Using it to pre-screen very large virtual libraries can result in a large number of false negatives. While this website does not collect or save data on SMILES strings, we advise against its use for proprietary compounds. Please contact alex_tropsha@unc.edu with questions.</p>
+        </div>
+
         <div id="forms-wrapper">
             <div class="search-wrapper">
                 <div class="single-search-wrapper">
                     <div class="form-wrapper">
                         <form id="single-smiles-form" class="smiles-form">
                             <div class="input-group">
-                                <input class="form-control" type="text" id="smiles-input" placeholder="Enter SMILES" value="OCCc1c(C)[n+](cs1)Cc2cnc(C)nc2N">
+                                <input class="form-control" type="text" id="smiles-input" placeholder="Enter SMILES" value="">
                             </div>
                             <button class="btn btn-default" title="Get properties of molecule from SMILES string." type="submit">
                                 Get Properties
                             </button>
                         </form>
+                        <div class="error-wrapper-input hidden">
+                            <p id="error-message-input" style="color: red"></p>
+                        </div>
                     </div>
                 </div>
                 <hr class="style1">
                 <div class="multi-search-wrapper">
-                    <p>You can also generate a CSV of the results by entering compounds below, seperated by commas or new lines. If number of SMILES > 1000 use the <a href="https://github.com/molecularmodelinglab/Stoplight">local standalone calculator</a> instead of this webserver.</p>
+                    <p>You can also generate a CSV of the results by entering compounds below, seperated by commas or new lines. If number of SMILES > 1000 use the <a href="https://github.com/jimmyjbling/Stoplight">local standalone calculator</a> instead of this webserver.</p>
                     <form id="multi-smiles-form" class="smiles-form">
                         <textarea class="form-control" id="multi-smiles" cols="30" rows="5" placeholder="Enter multiple SMILES strings as a comma or new line separated list and generate a .csv file."></textarea>
                         <input class="form-control" type="file" id="smiles-file">
@@ -80,7 +92,7 @@
                     </form>
                 </div>
                 <div class="error-wrapper hidden">
-                    <small id="error-message"></small>
+                    <p id="error-message"></p>
                 </div>
                 <div class="hidden loading-wrapper" style="text-align: center;"><img src="https://i.stack.imgur.com/MnyxU.gif" alt="LOADING..."></div>
             </div>

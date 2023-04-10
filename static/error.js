@@ -5,7 +5,8 @@ const smilesForm = document.getElementById('single-smiles-form');
 const smilesCSVText = document.getElementById('multi-smiles')
 const smilesCSV = document.getElementById('multi-smiles-form')
 const loadingWrapper = document.querySelector('.loading-wrapper');
-
+const smilesInputErrorWrap = document.querySelector('.error-wrapper-input')
+const smilesInputError = document.getElementById('error-message-input')
 
 function displayClientError(err) {
     errorMessage.innerHTML = `<b>Unexpected Client Error</b> ${err}`;
@@ -36,6 +37,8 @@ function displayServerError(err) {
 export function clearErrorMessage() {
     errorWrapper.classList.add('hidden');
     errorMessage.innerHTML = '';
+    smilesInputErrorWrap.classList.add('hidden');
+    smilesInputError.innerHTML = '';
 
     if (smilesForm.className.includes('has-danger')) {
         smilesForm.classList.remove('has-danger');
