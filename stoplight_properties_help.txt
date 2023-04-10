@@ -1,0 +1,29 @@
+props values you can pass: their description
+
+'all':  use all properties
+'molecular':    shorthand for the 6 molecular properties ('fsp3', 'logp', 'mw', 'rot_bonds', 'psa', 'esol')
+'liability':    shorthand for the 6 assay liability properties ('blac_agg', 'cprot_agg', 'fluc_inter', 'nluc_inter', 'redox_inter', 'thiol_inter')
+'pk':   shorthand for the 11 PK properties ('bbb', 'caco2', 'cns', 'hep_stab', 'micro_hf_sub', 'micro_hf_t', 'micro_clr', 'o_avail', 'pla_hf', 'pla_pb', 'ren_clr')
+'fsp3': fraction of sp3 hybridized carbon atoms
+'logp': calculated partition coefficient between water and 1-octanol
+'mw':   corrected molecular weight
+'rot_bonds':    number of rotatable bonds
+'psa':  polar surface area (A^2)
+'esol': predicted solubility in water (mg/L)
+'blac_agg': AmpC β-lactamase aggregation
+'cprot_agg':    Cysteine protease cruzain aggregation
+'fluc_inter':   Firefly Luciferase interference
+'nluc_inter':   Nano Luciferase interference
+'redox_inter':  Redox interference
+'thiol_inter':  Thiol interference
+'bbb':  blood brain barrier permeability
+'caco2':
+'cns':  central nervous system activity
+'hep_stab': Hepatic Stability
+'micro_hf_sub': Microsomal Half-life Sub-cellular
+'micro_hf_t':   Microsomal Half-life Tissue
+'micro_clr':    Microsomal Intrinsic Clearance
+'o_avail':  Oral Bioavailability
+'pla_hf':   Plasma Half-life
+'pla_pb':   Plasma Protein Binding
+'ren_clr'   Renal Clearance
