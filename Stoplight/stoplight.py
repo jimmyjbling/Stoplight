@@ -6,11 +6,16 @@ from Stoplight.main import get_csv_from_smiles
 
 CONVERT_OPTIONS = {
     'fsp3': 'FSP3',
-    'logp': 'LogP',
+    'logp': 'ALogP',
     'mw': 'Molecular Weight',
     'rot_bonds': 'Number of Rotatable Bonds',
     'psa': 'Polar Surface Area',
     'esol': 'Solubility in Water (mg/L)',
+    'hbd': 'HBD',
+    'hba': 'HBA',
+    'nha': 'Num Heavy Atoms',
+    'nrings': 'Number of Rings',
+    'nsc4': 'Num Saturated Quaternary Carbons',
     'blac_agg': 'AmpC β-lactamase aggregation',
     'cprot_agg': 'Cysteine protease cruzain aggregation',
     'fluc_inter': 'Firefly Luciferase interference',
@@ -34,16 +39,23 @@ PROPERTY_LITERALS = {
     "all": ['fsp3', 'logp', 'mw', 'rot_bonds', 'psa', 'esol', 'blac_agg', 'cprot_agg', 'fluc_inter', 'nluc_inter',
             'redox_inter', 'thiol_inter', 'bbb', 'caco2', 'cns', 'hep_stab', 'micro_hf_sub', 'micro_hf_t', 'micro_clr',
             'o_avail', 'pla_hf', 'pla_pb', 'ren_clr'],
-    "molecular": ['fsp3', 'logp', 'mw', 'rot_bonds', 'psa', 'esol'],
+    "molecular": ['fsp3', 'logp', 'mw', 'rot_bonds', 'psa', 'esol', "hbd", "hba", "nha", 'nrings', 'nsc4'],
     "pk": ['bbb', 'caco2', 'cns', 'hep_stab', 'micro_hf_sub', 'micro_hf_t', 'micro_clr',
            'o_avail', 'pla_hf', 'pla_pb', 'ren_clr'],
     "liability": ['blac_agg', 'cprot_agg', 'fluc_inter', 'nluc_inter', 'redox_inter', 'thiol_inter'],
+    "prop_liability": ['fsp3', 'logp', 'mw', 'rot_bonds', 'psa', 'esol', "hbd", "hba", "nha", 'nrings', 'nsc4',
+                       'blac_agg', 'cprot_agg', 'fluc_inter', 'nluc_inter', 'redox_inter', 'thiol_inter'],
     'fsp3': ['fsp3'],
     'logp': ['logp'],
     'mw': ['mw'],
     'rot_bonds': ['rot_bonds'],
     'psa': ['psa'],
     'esol': ['esol'],
+    'hbd': ['hbd'],
+    'hba': ['hba'],
+    'nha': ['nha'],
+    'nrings': ['nrings'],
+    'nsc4': ['nsc4'],
     'blac_agg': ['blac_agg'],
     'cprot_agg': ['cprot_agg'],
     'fluc_inter': ['fluc_inter'],
@@ -83,13 +95,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    options = {key: True for key in list(set([__ for _ in args.props for __ in PROPERTY_LITERALS[_]]))}
+    options = {CONVERT_OPTIONS[key]: True for key in list(set([__ for _ in args.props for __ in PROPERTY_LITERALS[_]]))}
     options["drop_invalid"] = args.drop_invalid
+    options["precision"] = 2
 
     try:
         _col = int(args.smi_col)
-        smiles = pd.read_csv(args.infile, header=None)[0]
+        smiles = pd.read_csv(args.infile, header=None, sep="\t")[0]
     except ValueError:
-        smiles = pd.read_csv(args.infile)[args.smi_col]
+        smiles = pd.read_csv(args.infile, sep="\t")[args.smi_col]
 
     csv_text = get_csv_from_smiles(smiles_list=smiles.to_list(), options=options)
+
+    with open(args.outfile, "w", encoding="utf-8") as f:
+        csv_text = csv_text.replace("\r\n", "\n")
+        f.write(csv_text)

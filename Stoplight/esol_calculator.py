@@ -5,8 +5,10 @@ import numpy as np
 import pickle
 import os
 
+from Stoplight.constants import MODULE_DIR
+
 print(os.getcwd())
-MODEL = pickle.load(open("./Stoplight/models/esol_model.pkl", 'rb'))
+MODEL = pickle.load(open(os.path.join(MODULE_DIR, "models", "esol_model.pkl"), 'rb'))
 AROMATIC_QUERY = Chem.MolFromSmarts("a")
 Descriptor = namedtuple("Descriptor", "mw logp rotors ap")
 
@@ -56,7 +58,7 @@ def calc_esol_delaney(mol):
 
 def calc_esol_xgbmodel(mol):
     desc_funcs = [x[1] for x in Descriptors.descList if x[0] != "Ipc"]
-    X = np.array([func(mol) for func in desc_funcs]).reshape(1, 207)
+    X = np.array([func(mol) for func in desc_funcs]).reshape(1, -1)
 
     try:
         esol = MODEL.predict(X)

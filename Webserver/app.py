@@ -71,7 +71,7 @@ def smiles_csv():
 
     print(_smiles)
 
-    if len(_smiles) > 1000:
+    if len(_smiles) > 5000:
         return abort(413)
 
     if len(_smiles) == 1 and _smiles[0] == '':

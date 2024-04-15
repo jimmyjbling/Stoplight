@@ -10,6 +10,8 @@ import pickle
 import io
 import matplotlib.pyplot as plt
 
+from Stoplight.constants import MODULE_DIR
+
 # god hates me so in my version of python I cannot supress these damn user warning so I do this nuclear option instead
 import warnings
 def warn(*args, **kwargs):
@@ -25,6 +27,8 @@ MODEL_DICT = {
     'agg_betalac_model.pkl': 'AmpC β-lactamase aggregation',
     'agg_cruzain_model.pkl': 'Cysteine protease cruzain aggregation'
 }
+
+MODEL_DICT_INVERSE = {val: pickle.load(open(os.path.join(MODULE_DIR, "models", "assay_inter", key), "rb")) for key, val in MODEL_DICT.items()}
 
 
 OUTCOME_DICT = {
@@ -109,7 +113,7 @@ def multiclass_ranking(ordered_preds):
 
 def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
 
-    print(smiles)
+    # print(smiles)
 
     def default(key, d):
         if key in d.keys():
@@ -117,15 +121,12 @@ def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
         else:
             return False
 
-    models = sorted([f for f in glob.glob("./Stoplight/models/assay_inter/*.pkl")])
-
     values = {}
 
-    for model in models:
-        if not default(MODEL_DICT[os.path.basename(model)], kwargs):
+    for model in MODEL_DICT_INVERSE.keys():
+        if not default(model, kwargs):
             continue
-        with open(model, 'rb') as f:
-            m = pickle.load(f)
+        m = MODEL_DICT_INVERSE[model]
 
         # for now I have no AD data so we are just doing this
         pred, pred_proba, ad = run_prediction(m, None, smiles, calculate_ad=False)
@@ -134,6 +135,6 @@ def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
         if make_prop_img:
             svg_str = get_prob_map(m, smiles)
 
-        values[MODEL_DICT[os.path.basename(model)]] = [1, OUTCOME_DICT[MODEL_DICT[os.path.basename(model)]][int(pred)], str(round(float(pred_proba) * 100, 2)) + "%", "NA"]
+        values[model] = [1, OUTCOME_DICT[model][int(pred)], str(round(float(pred_proba) * 100, 2)) + "%", ""]
 
     return values

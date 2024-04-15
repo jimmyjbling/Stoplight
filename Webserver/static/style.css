@@ -21,6 +21,7 @@ body {
     grid-template-columns: 2.5fr 1fr;
     grid-gap: 0.5em;
     grid-template-areas:
+        "desc options"
         "search options"
         "search options"
         "molecule options"
@@ -28,6 +29,10 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+.desc-wrapper {
+    grid-area: desc;
 }
 
 .molecule-wrapper {

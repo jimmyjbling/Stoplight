@@ -3,6 +3,7 @@ import { displayError } from './error.js';
 const optionsForm = document.getElementById('search-options');
 const openButton = document.getElementById('options-dropdown-open');
 const closeButton = document.getElementById('options-dropdown-close');
+const floatOption = document.getElementById('float-control')
 
 function showOptions() {
     optionsForm.classList.add('search-options-open');
@@ -47,27 +48,27 @@ function addMoleculePropertyOption(name, checked) {
 
     wrapper.append(checkbox);
     wrapper.append(label);
-    optionsForm.append(wrapper);
+    optionsForm.insertBefore(wrapper, floatOption);
 }
 
 export function displayMoleculePropertyOptions(propNames) {
     let groupOne = document.createElement('p');
     groupOne.innerHTML = "Molecular Properties"
-    optionsForm.append(groupOne);
+    optionsForm.insertBefore(groupOne, floatOption);
     for (const prop of propNames.mp) {
         addMoleculePropertyOption(prop, 1);
     }
 
     let groupTwo = document.createElement('p');
     groupTwo.innerHTML = "Assay Liabilities"
-    optionsForm.append(groupTwo);
+    optionsForm.insertBefore(groupTwo, floatOption);
     for (const prop of propNames.al) {
         addMoleculePropertyOption(prop, 0);
     }
 
     let groupThree = document.createElement('p');
     groupThree.innerHTML = "PK Properties"
-    optionsForm.append(groupThree);
+    optionsForm.insertBefore(groupThree, floatOption);
     for (const prop of propNames.pk) {
         addMoleculePropertyOption(prop, 0);
     }
@@ -84,6 +85,7 @@ export function getOptions() {
 
     return options;
 }
+
 
 fetch('/endpoints', {
     method: 'GET',

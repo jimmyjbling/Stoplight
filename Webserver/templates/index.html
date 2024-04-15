@@ -31,13 +31,36 @@
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <link type="text/css" href="https://cdn.jsdelivr.net/npm/argon-design-system-free@1.2.0/assets/css/argon-design-system.min.css" rel="stylesheet">
 
-    <script type="text/javascript" language="javascript" src="static/jsme/jsme.nocache.js"></script>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.5/perfect-scrollbar.min.js" integrity="sha512-X41/A5OSxoi5uqtS6Krhqz8QyyD8E/ZbN7B4IaBSgqPLRbWVuXJXr9UwOujstj71SoVxh5vxgy7kmtd17xrJRw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
     <script src="https://unpkg.com/@popperjs/core@2" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/argon-design-system-free@1.2.0/assets/js/argon-design-system.min.js" defer></script>
+
+    <script type="text/javascript" language="javascript" src="static/jsme/jsme.nocache.js"></script>
+
+    <script>
+     //this function will be called after the JavaScriptApplet code has been loaded.
+        function jsmeOnLoad() {
+            jsmeApplet = new JSApplet.JSME("JME", "380px", "340px");
+            jsmeApplet.setCallBack("AfterStructureModified", showSmiles);
+        }
+        function showSmiles(jsmeEvent) {
+            console.log(jsmeEvent.action)
+             const smileText = document.getElementById('smiles-input')
+             smileText.value = jsmeEvent.src.smiles();
+        }
+
+    </script>
+    <script>
+        function checkThings(checkVal) {
+            let checkboxes = document.getElementsByClassName('custom-control-input')
+            let i = 0, n = checkboxes.length;
+            for(; i<n; i++) {
+                checkboxes[i].checked = checkVal;
+            }
+        }
+    </script>
 
 
 </head>
@@ -47,26 +70,27 @@
             <img src="./static/logo_main_large_text2.png" alt="" style="float: left; height: 100px; padding: 5px;">
             <h1 class="display-4" id="title" style="vertical-align: middle; line-height: 100px;">STOPLIGHT: A Hit Scoring Calculator</h1>
         </div>
-        <p style="font-size: 20px">This is an online web portal to score and predict compounds properties following the STOPLIGHT approach from PAPERLINK. To use, enter SMILE in the box below, or draw a compound and hit load SMILES, then click "Get Properties". Results will appear below. You can choose desired properties below in the option sidebar. You can find a offline program for STOPLIGHT <a href="https://github.com/jimmyjbling/Stoplight">here</a>.</p>
-        <div>
-            <form action="/score-description">
-                <strong style="font-size: 20px">To see a description of how stoplight works and calculates it scores:&nbsp;&nbsp;&nbsp;</strong>
-                <button class="btn btn-default" type="submit">Click here</button>
-            </form>
-        </div>
-
-        <div>
-            <p></p>
-            <p>Please note that this calculator works best when used to score and rank enriched small libraries. Using it to pre-screen very large virtual libraries can result in a large number of false negatives. While this website does not collect or save data on SMILES strings, we advise against its use for proprietary compounds. Please contact alex_tropsha@unc.edu with questions.</p>
-        </div>
-
+        <p style="font-size: 20px">This is an online web portal to score and predict compound properties for use in filtering small chemical datasets for drug-likeness, as outlined in <a href="https://chemrxiv.org/engage/chemrxiv/article-details/64e5333e3fdae147faa01202">our paper</a>. To use, enter SMILE in the box below, or draw a compound and hit load SMILES, then click "Get Properties". Results will appear below. You can choose the desired properties below in the option sidebar. You can find an offline program for STOPLIGHT <a href="https://github.com/jimmyjbling/Stoplight">here</a>.</p>
         <div id="forms-wrapper">
+            <div id="desc-wrapper">
+                <div>
+                    <form action="/score-description">
+                        <strong style="font-size: 20px">To see a description of how stoplight works and calculates it scores:&nbsp;&nbsp;&nbsp;</strong>
+                        <button class="btn btn-default" type="submit">Click here</button>
+                    </form>
+                </div>
+
+                <div>
+                    <p></p>
+                    <p>Please note that this calculator works best when used to score and rank enriched small libraries. Using it to pre-screen very large virtual libraries can result in a large number of false negatives. While this website does not collect or save data on SMILES strings, we advise against its use for proprietary compounds. Please contact <a href="mailto:alex_tropsha@unc.edu">alex_tropsha@unc.edu</a> with questions.</p>
+                </div>
+            </div>
             <div class="search-wrapper">
                 <div class="single-search-wrapper">
                     <div class="form-wrapper">
                         <form id="single-smiles-form" class="smiles-form">
                             <div class="input-group">
-                                <input class="form-control" type="text" id="smiles-input" placeholder="Enter SMILES" value="">
+                                <input class="form-control" type="text" id="smiles-input" placeholder="Enter SMILES" value="" style="font-weight:bold; font-size: 24px">
                             </div>
                             <button class="btn btn-default" title="Get properties of molecule from SMILES string." type="submit">
                                 Get Properties
@@ -79,11 +103,11 @@
                 </div>
                 <hr class="style1">
                 <div class="multi-search-wrapper">
-                    <p>You can also generate a CSV of the results by entering compounds below, seperated by commas or new lines. If number of SMILES > 1000 use the <a href="https://github.com/jimmyjbling/Stoplight">local standalone calculator</a> instead of this webserver.</p>
+                    <p>You can also generate a CSV of the results by entering the compounds below, separated by commas or new lines. If number of SMILES > 1000 use the <a href="https://github.com/jimmyjbling/Stoplight">local standalone calculator</a> instead of this webserver.</p>
                     <form id="multi-smiles-form" class="smiles-form">
                         <textarea class="form-control" id="multi-smiles" cols="30" rows="5" placeholder="Enter multiple SMILES strings as a comma or new line separated list and generate a .csv file."></textarea>
                         <input class="form-control" type="file" id="smiles-file">
-                        <p>When uploading a SMILES file make sure smiles are newline seperated (for example a csv with one column and each row is a SMILES). Uploaded files will auto-populate the text area, wait to generate csv until you see them in the box.</p>
+                        <p>When uploading a SMILES file, make sure smiles are newline separated (for example, a csv with one column and each row is a SMILES). Uploaded files will autopopulate the text area, wait to generate csv until you see them in the box.</p>
                         <div class="hidden loading-wrapper-csv" style="text-align: center;"><img src="https://i.stack.imgur.com/MnyxU.gif" alt="LOADING..."></div>
                         <button class="btn btn-default" title="Generate a CSV file containing molecular properties from multiple SMILES strings" type="submit">
                             <i class="ni ni-cloud-download-95"></i>Generate CSV
@@ -97,18 +121,7 @@
                 <div class="hidden loading-wrapper" style="text-align: center;"><img src="https://i.stack.imgur.com/MnyxU.gif" alt="LOADING..."></div>
             </div>
             <div class="options-wrapper">
-                <div class="jme-wrapper">
-                    <form id="draw-smiles-form" class="draw-form">
-                        <div code="JME.class" name="JME" archive="JME.jar" width="360" height="315" id="JME">You have to enable JavaScript in your browser to use JSME! </div>
-                        <div class="load_smiles_button">
-                            <p></p>
-                            <button class="btn btn-default" title="Get SMILES From JSME" type="submit">
-                                Load SMILES
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                <div><p></p></div>
+                <div id="JME"></div>
                 <div class="options-sidebar" style="overflow-y:scroll; height: 600px">
                     <div class="options-icons">
                         <i id="options-dropdown-open" class="options-dropdown ni ni-bold-down"></i>
@@ -116,8 +129,13 @@
                         <i class="ni ni-settings-gear-65"></i>
                     </div>
                     <form id="search-options">
-                        <p>Model Options</p>
-                        <div class="option-item option-item-number">
+                        <div class="button-container">
+                            <p style="font-size: 30px; font-weight:bold">Model Options</p>
+                            <input id="select-all" value="Select all" type="button" onclick="checkThings(1)">
+                            <input id="clear-all" value="Clear all" type="button" onclick="checkThings(0)">
+                            <p></p>
+                        </div>
+                        <div class="option-item option-item-number" id="float-control">
                             <label for="float-precision">Float Precision</label>
                             <input class="form-control form-control-sm" id="float-precision" type="number" name="precision" value="2">
                         </div>
@@ -139,8 +157,9 @@
             </div>
         </div>
         <div>
-            <p style="color: #a5a3a3">Developed by James Wellnitz of the <a href="https://molecularmodelinglab.github.io/">MML @ UNC</a></p>
-              <p style="color: #a5a3a3">Supported by the National Institute of General Medical Sciences of the National Institutes of Health under Award Number T32GM135122 and National Institute of Allergy and Infectious Diseases of the National Institutes of Health under Award Number U19AI171292. The content is solely the responsibility of the authors and does not necessarily represent the official views of National Institutes of Health</p>
+            <p style="color: #a5a3a3">Built embarrassingly sloppy and fast by James Wellnitz of the <a href="https://molecularmodelinglab.github.io/">MML @ UNC</a></p>
+            <p>If you are interested in helping make Stoplight better, please reach out to <a href="mailto:jwellnitz@unc.edu">James Wellnitz</a></p>
+              <p style="color: #a5a3a3">Supported by the National Institute of General Medical Sciences of the National Institutes of Health under Award Number T32GM135122 and National Institute of Allergy and Infectious Diseases of the National Institutes of Health under Award Number U19AI171292. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health</p>
               <p style="color: #a5a3a3">&copy; 2023, all rights reserved</p>
         </div>
     </main>

@@ -1,11 +1,17 @@
 import csv
+import math
+import time
 from io import StringIO
+
+from tqdm import tqdm
 
 from rdkit import Chem
 from rdkit.Chem import MolFromSmiles
 
-from .pk_calculator import CLASSIFICATION_DICT
+from .pk_calculator import CLASSIFICATION_DICT as PK_CLASSIFICATION_DICT
 from .assay_liability_calculator import OUTCOME_DICT
+
+CLASSIFICATION_DICT = PK_CLASSIFICATION_DICT.copy()
 
 CLASSIFICATION_DICT.update(OUTCOME_DICT)
 
@@ -18,11 +24,16 @@ INVERSE_CLASS_DICT = {key2: {val: key for key, val in val2.items()} for key2, va
 
 MOLECULE_PROPERTY_SCORES = {
     'Solubility in Water (mg/L)': ([50, 10], "bigger"),
-    'LogP': ([2, 3], "smaller"),
+    'ALogP': ([2, 3], "smaller"),
     'Molecular Weight': ([400, 500], "smaller"),
     'Polar Surface Area': ([120, 140], "smaller"),
     'Number of Rotatable Bonds': ([7, 11], "smaller"),
     'FSP3': ([0.3, 0.2], "bigger"),
+    'Number of Rings': (None, None),
+    'HBD': (None, None),
+    'HBA': (None, None),
+    "Num Heavy Atoms": (None, None),
+    'Num Saturated Quaternary Carbons': (None, None),
     "Putative aggregator": 1,
     "Non-aggregator": 0,
     "Possible Interference": 1,
@@ -49,28 +60,23 @@ def get_csv_from_smiles(smiles_list, options):
     # CSV writer expects a file object, not a string.
     # StringIO can be used to store a string as a file-like object.
 
-    print(options)
+    # print(options)
 
     options["make_prop_img"] = False  # do not need to create images for csv
 
     headers = [key for key, val in options.items() if ((key not in ["make_prop_img", "precision"]) and val)]
 
-    # Add prop headers for datapoints with AD
-    prob_headers = [f"{key}_prob" for key in headers if key not in ['LogP', 'Molecular Weight', 'Polar Surface Area', 'Number of Rotatable Bonds', 'FSP3', 'Solubility in Water (mg/L)']]
-    # Add AD headers for datapoints with AD
-    ad_headers = [f"{key}_AD" for key in headers if key not in ['LogP', 'Molecular Weight', 'Polar Surface Area', 'Number of Rotatable Bonds', 'FSP3', 'Solubility in Water (mg/L)']]
-
-    headers = headers + prob_headers + ad_headers
+    headers = headers + [f"{key}_proba" for key in headers if key in PK_CLASSIFICATION_DICT.keys()]
 
     string_file = StringIO()
     if any([_ in ASSAY_LIABILITIES for _ in headers]):
-        writer = csv.DictWriter(string_file, fieldnames=['SMILES', *headers, "OverallScore", "StoplightColor", "ConsensusAssayScore"])
+        writer = csv.DictWriter(string_file, fieldnames=['SMILES', *headers, "OverallScore", "StoplightColor"], delimiter=",")
     else:
-        writer = csv.DictWriter(string_file, fieldnames=['SMILES', *headers, "OverallScore", "StoplightColor"])
+        writer = csv.DictWriter(string_file, fieldnames=['SMILES', *headers, "OverallScore", "StoplightColor"], delimiter=",")
     writer.writeheader()
 
     # loop through all the smiles
-    for smiles in smiles_list:
+    for smiles in tqdm(smiles_list):
         molecule = MolFromSmiles(smiles)
 
         row = {'SMILES': smiles}
@@ -85,32 +91,34 @@ def get_csv_from_smiles(smiles_list, options):
             continue
 
         props, overall_score = get_stoplight(smiles, options)
+        overall_score = round(overall_score, int(options["precision"]))
 
         props = [[key] + val for key, val in props.items()]
-
         # loop through all properties for the smiles
-        overall_liability_score = []
-        for prop_name, _, pred, pred_proba, ad, score, _ in props:
-            if prop_name not in ['LogP', 'Molecular Weight', 'Polar Surface Area', 'Number of Rotatable Bonds', 'FSP3', 'Solubility in Water (mg/L)']:
-                print(prop_name, _, pred, pred_proba, ad, score, _)
-                row[prop_name] = INVERSE_CLASS_DICT[prop_name][pred]
-                try:
-                    row[prop_name + "_prob"] = float(pred_proba[:-1]) / 100  # covert back to 0-1 float
-                except ValueError:
-                    row[prop_name] = "NA"  # if pred_proba is string skip
-                    row[prop_name + "_prob"] = "NA"
-                row[prop_name + "_AD"] = ad
+        for prop_name, _, pred, pred_proba, ad, score, __ in props:
+            if prop_name not in ['ALogP', 'Molecular Weight', 'Polar Surface Area', 'Number of Rotatable Bonds', 'FSP3',
+                                 'Solubility in Water (mg/L)', 'Number of Rings', 'HBD', 'HBA', "Num Heavy Atoms",
+                                 'Num Saturated Quaternary Carbons']:
 
-                if prop_name in ["Firefly Luciferase interference", "Nano Luciferase interference", "Redox interference", "Thiol interference", "AmpC β-lactamase aggregation", "Cysteine protease cruzain aggregation"]:
-                    overall_liability_score.append(row[prop_name + "_prob"] if pred in ["No Interference", "Non-aggregator"] else 1-row[prop_name + "_prob"])
+                if prop_name not in PK_CLASSIFICATION_DICT.keys():
+                    row[prop_name] = round(float(pred_proba[:-1]) / 100.0, int(options["precision"])) if INVERSE_CLASS_DICT[prop_name][pred] == 0 \
+                        else round(1 - (float(pred_proba[:-1]) / 100.0), int(options["precision"]))
+                else:
+                    row[prop_name] = pred
+                    try:
+                        row[prop_name+"_proba"] = round(float(pred_proba[:-1]) / 100.0, int(options["precision"]))
+                    except ValueError:
+                        row[prop_name+"_proba"] = pred_proba
+                # if prop_name in ["Firefly Luciferase interference", "Nano Luciferase interference", "Redox interference", "Thiol interference", "AmpC β-lactamase aggregation", "Cysteine protease cruzain aggregation"]:
+                #     overall_liability_score.append(row[prop_name + "_prob"] if pred in ["No Interference", "Non-aggregator"] else 1-row[prop_name + "_prob"])
             else:
                 row[prop_name] = pred
 
         row["OverallScore"] = overall_score
         row["StoplightColor"] = _stoplight_colors(overall_score)
-        if len(overall_liability_score) > 0:
-            _vals = [float(_) for _ in overall_liability_score if overall_liability_score != "NA"]
-            row["ConsensusAssayScore"] = 1 - (sum(_vals) / len(_vals)) if len(_vals) > 0 else "NA"
+        # if len(overall_liability_score) > 0:
+        #     _vals = [float(_) for _ in overall_liability_score if overall_liability_score != "NA"]
+        #     row["ConsensusAssayScore"] = round(1 - (sum(_vals) / len(_vals)), int(options["precision"])) if len(_vals) > 0 else "NA"
         writer.writerow(row)
 
     return string_file.getvalue()
@@ -118,6 +126,8 @@ def get_csv_from_smiles(smiles_list, options):
 
 def get_prop_score(prop_name, prop_val):
     score_range, order = MOLECULE_PROPERTY_SCORES[prop_name]
+    if score_range is None:
+        return 0
     if order == "smaller":
         score = 2
         if prop_val < score_range[1]:
@@ -151,7 +161,9 @@ def get_stoplight(smiles, options):
         results.update(res)
 
     # RDKit Properties
-    if any([_ in options.keys() for _ in ['LogP','Molecular Weight','Polar Surface Area','Number of Rotatable Bonds','FSP3']]):
+    if any([_ in options.keys() for _ in ['LogP', 'Molecular Weight', 'Polar Surface Area', 'Number of Rotatable Bonds', 'FSP3',
+                                 'Solubility in Water (mg/L)', 'Number of Rings', 'HBD', 'HBA', "Num Heavy Atoms",
+                                 'Num Saturated Quaternary Carbons']]):
         from .prop_calculator import get_props
         res = get_props(smiles, options)
         res = {key: val + [get_prop_score(key, val[1])] for key, val in res.items()}
@@ -175,6 +187,8 @@ def get_stoplight(smiles, options):
 
     if len(overall_scores) > 0:
         overall_score = sum(overall_scores) / len(overall_scores)
+        overall_score = round(overall_score, int(options["precision"]))
+
     else:
         overall_score = None
 

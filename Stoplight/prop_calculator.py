@@ -1,15 +1,46 @@
 from collections import OrderedDict
 
 from rdkit import Chem
-from rdkit.Chem import Descriptors, Crippen, Lipinski, QED
+from rdkit.Chem import Descriptors, Crippen, Lipinski, QED, rdMolDescriptors
+import re
+
+def _num_saturated_quaternary_carbons(mol):
+    return len(mol.GetSubstructMatches(Chem.MolFromSmarts("[#6]([#6])([#6])([#6])[#6]")))
+
+
+def _num_consecutive_rings(mol):
+    res1 = re.sub(r'[^0-9()]', "", Chem.MolToSmiles(mol))
+    res2 = re.sub(r'\(([0-9])\1+\)', "", res1)
+    res3 = re.sub(r'[()]', "", res2)
+
+    max_set = 0
+    _set = set()
+    leader = -1
+    for c in res3:
+        if leader == -1:
+            leader = c
+            continue
+        if leader == c:
+            max_set = max([len(_set), max_set])
+            _set = set()
+            leader = -1
+        else:
+            _set.add(c)
+
+    return max_set
 
 
 MOLECULE_PROPERTIES = OrderedDict({
-    'LogP': Crippen.MolLogP,
+    'ALogP': Crippen.MolLogP,
     'Molecular Weight': Descriptors.MolWt,
     'Polar Surface Area': lambda mol: QED.properties(mol).PSA,
     'Number of Rotatable Bonds': Lipinski.NumRotatableBonds,
-    'FSP3': Lipinski.FractionCSP3
+    'FSP3': Lipinski.FractionCSP3,
+    'Number of Rings': rdMolDescriptors.CalcNumRings,
+    'HBD': rdMolDescriptors.CalcNumHBD,
+    'HBA': rdMolDescriptors.CalcNumHBA,
+    "Num Heavy Atoms": rdMolDescriptors.CalcNumHeavyAtoms,
+    'Num Saturated Quaternary Carbons': _num_saturated_quaternary_carbons
 })
 
 

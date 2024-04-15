@@ -5,4 +5,5 @@ const smileText = document.getElementById('smiles-input')
 form.onsubmit = (event) => {
     event.preventDefault();
     smileText.value = document.JME.smiles()
+    document.JME.smiles()
 }

@@ -1,5 +1,10 @@
+import os
+
 from rdkit.Chem import MolFromSmiles, Draw
 from Stoplight.main import get_stoplight
+
+
+MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def get_molecule_data_from_smiles(smiles_str, options):
@@ -27,13 +32,13 @@ def get_molecule_data_from_smiles(smiles_str, options):
         assay_conensus = -1
 
     if overall_score == 0:
-        with open("./Webserver/static/green.svg", "r") as f:
+        with open(os.path.join(MODULE_DIR, "static", "green.svg"), "r") as f:
             stoplight = f.read()
     elif overall_score <= 1:
-        with open("./Webserver/static/yellow.svg", "r") as f:
+        with open(os.path.join(MODULE_DIR, "static", "yellow.svg"), "r") as f:
             stoplight = f.read()
     elif overall_score <= 2:
-        with open("./Webserver/static/red.svg", "r") as f:
+        with open(os.path.join(MODULE_DIR, "static", "red.svg"), "r") as f:
             stoplight = f.read()
     else:
         stoplight = ""

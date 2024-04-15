@@ -6,12 +6,13 @@ import numpy as np
 
 import glob
 import gzip
-import bz2
 import os
 import _pickle as cPickle
 
 import io
 import matplotlib.pyplot as plt
+
+from Stoplight.constants import MODULE_DIR
 
 # god hates me so in my version of python I cannot supress these damn user warning so I do this nuclear option instead
 import warnings
@@ -20,28 +21,28 @@ def warn(*args, **kwargs):
 warnings.warn = warn
 
 MODEL_DICT = {
-    'Hepatic Stability': ['Dataset_01B_hepatic-stability_15min_imbalanced-morgan_RF.pgz',
+    'Hepatic Stability': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['Dataset_01B_hepatic-stability_15min_imbalanced-morgan_RF.pgz',
                           'Dataset_01C_hepatic-stability_30min_imbalanced-morgan_RF.pgz',
-                          'Dataset_01D_hepatic-stability_60min_imbalanced-morgan_RF.pgz'],
-    'Microsomal Half-life Sub-cellular': ['Dataset_02A_microsomal-half-life-subcellular_imbalanced-morgan_RF.pgz'],
-    'Microsomal Half-life Tissue': ['Dataset_02B_microsomal-half-life_30-min_binary_unbalanced_morgan_RF.pgz'],
-    'Renal Clearance': ['dataset_03_renal-clearance_0.1-threshold_balanced-morgan_RF.pgz',
+                          'Dataset_01D_hepatic-stability_60min_imbalanced-morgan_RF.pgz']],
+    'Microsomal Half-life Sub-cellular': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['Dataset_02A_microsomal-half-life-subcellular_imbalanced-morgan_RF.pgz']],
+    'Microsomal Half-life Tissue': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['Dataset_02B_microsomal-half-life_30-min_binary_unbalanced_morgan_RF.pgz']],
+    'Renal Clearance': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['dataset_03_renal-clearance_0.1-threshold_balanced-morgan_RF.pgz',
                         'dataset_03_renal-clearance_0.5-threshold_imbalanced-morgan_RF.pgz',
-                        'dataset_03_renal-clearance_1.0-threshold_balanced-morgan_RF.pgz'],
-    'BBB Permeability': ['dataset_04_bbb-permeability_balanced-morgan_RF.pgz'],
-    'CNS Activity': ['dataset_04_cns-activity_1464-compounds_imbalanced-morgan_RF.pgz'],
-    'CACO2': ['Dataset_05A_CACO2_binary_unbalanced_morgan_RF.pgz'],
-    'Plasma Protein Binding': ['Dataset_06_plasma-protein-binding_binary_unbalanced_morgan_RF.pgz'],
-    'Plasma Half-life': ['Dataset_08_plasma_half_life_12_hr_balanced-morgan_RF.pgz',
+                        'dataset_03_renal-clearance_1.0-threshold_balanced-morgan_RF.pgz']],
+    'BBB Permeability': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['dataset_04_bbb-permeability_balanced-morgan_RF.pgz']],
+    'CNS Activity': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['dataset_04_cns-activity_1464-compounds_imbalanced-morgan_RF.pgz']],
+    'CACO2': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['Dataset_05A_CACO2_binary_unbalanced_morgan_RF.pgz']],
+    'Plasma Protein Binding': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['Dataset_06_plasma-protein-binding_binary_unbalanced_morgan_RF.pgz']],
+    'Plasma Half-life': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['Dataset_08_plasma_half_life_12_hr_balanced-morgan_RF.pgz',
                          'Dataset_08_plasma_half_life_1_hr_balanced-morgan_RF.pgz',
-                         'Dataset_08_plasma_half_life_6_hr_imbalanced-morgan_RF.pgz'],
-    'Microsomal Intrinsic Clearance': ['Dataset_09_microsomal-intrinsic-clearance_12uL-min-mg-threshold-imbalanced-morgan_RF.pgz'],
-    'Oral Bioavailability': ['dataset_10_oral_bioavailability_0.5_threshold_imbalanced-morgan_RF.pgz',
-                             'dataset_10_oral_bioavailability_0.8_balanced-morgan_RF.pgz']
+                         'Dataset_08_plasma_half_life_6_hr_imbalanced-morgan_RF.pgz']],
+    'Microsomal Intrinsic Clearance': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['Dataset_09_microsomal-intrinsic-clearance_12uL-min-mg-threshold-imbalanced-morgan_RF.pgz']],
+    'Oral Bioavailability': [cPickle.load(gzip.open(os.path.join(MODULE_DIR, "models", "pkcast", _), 'rb')) for _ in ['dataset_10_oral_bioavailability_0.5_threshold_imbalanced-morgan_RF.pgz',
+                             'dataset_10_oral_bioavailability_0.8_balanced-morgan_RF.pgz']]
 }
 
 # lol I'm just like screw code readability sorry
-MODEL_DICT_INVERT = {v: key for key, val in MODEL_DICT.items() for v in val}
+# MODEL_DICT_INVERT = {v: key for key, val in MODEL_DICT.items() for v in val}
 
 CLASSIFICATION_DICT = {
     'Hepatic Stability': {
@@ -160,7 +161,7 @@ def multiclass_ranking(ordered_preds):
     return idx if idx != 0 else len(ordered_preds)+1
 
 
-def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
+def main(smiles, calculate_ad=False, make_prop_img=False, **kwargs):
 
     print(smiles)
 
@@ -171,34 +172,27 @@ def main(smiles, calculate_ad=True, make_prop_img=False, **kwargs):
             return False
 
     models = sorted([f for f in glob.glob("./Stoplight/models/pkcast/*.pgz")], key=lambda x: x.split("_")[1])
-    models_data = sorted([f for f in glob.glob("./Stoplight/models/pkcast/*.pbz2")], key=lambda x: x.split("_")[1])
 
     values = {}
 
-    for model_endpoint, model_data in zip(models, models_data):
-        if not default(MODEL_DICT_INVERT[os.path.basename(model_endpoint)], kwargs):
+    for model_endpoint in MODEL_DICT.keys():
+        if not default(model_endpoint, kwargs):
             continue
 
-        with gzip.open(model_endpoint, 'rb') as f:
-            model = cPickle.load(f)
+        for model in MODEL_DICT[model_endpoint]:
+            pred, pred_proba, ad = run_prediction(model, None, smiles, calculate_ad=False)
+            svg_str = ""
+            if make_prop_img:
+                svg_str = get_prob_map(model, smiles)
 
-        with bz2.BZ2File(model_data, 'rb') as f:
-            model_data = cPickle.load(f)
-
-        pred, pred_proba, ad = run_prediction(model, model_data, smiles, calculate_ad=calculate_ad)
-
-        svg_str = ""
-        if make_prop_img:
-            svg_str = get_prob_map(model, smiles)
-
-        values.setdefault(MODEL_DICT_INVERT[os.path.basename(model_endpoint)], []).append([int(pred), str(round(float(pred_proba) * 100, 2)) + "%", AD_DICT[ad]])
+            values.setdefault(model_endpoint, []).append([int(pred), str(round(float(pred_proba) * 100, 2)) + "%", ""])
 
     processed_results = {}
     for key, val in values.items():
         if key in ['Hepatic Stability', 'Renal Clearance', 'Plasma Half-life', 'Oral Bioavailability']:
             new_pred = multiclass_ranking([_[0] for _ in val])
             if new_pred == 0:
-                processed_results[key] = [2, "Inconsistent result: no prediction", "Very unconfident", "NA", "", "black"]
+                processed_results[key] = [2, "Inconsistent result: no prediction", "Very unconfident", "", "", "black"]
             else:
                 # this is because of how the hierarchical model works
                 if new_pred in [1, 2]:
