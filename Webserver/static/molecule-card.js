@@ -63,7 +63,7 @@ export function displayMoleculeCard(moleculeData) {
                 moleculeProperties.append(propHeader);
                 let conHeader = document.createElement('span');
                 conHeader.classList.add("model-preds");
-                conHeader.innerHTML = `<strong>Liability Consensus: ${moleculeData.assayCon}</strong>`;
+                conHeader.innerHTML = `<strong>Liability Consensus (average probability of liability occuring): ${moleculeData.assayCon}</strong>`;
                 moleculeProperties.append(conHeader);
                 groupChange = 0;
             }
