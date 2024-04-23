@@ -100,8 +100,9 @@ def get_csv_from_smiles(smiles_list, options):
                                  'Solubility in Water (mg/L)', 'Number of Rings', 'HBD', 'HBA', "Num Heavy Atoms",
                                  'Num Saturated Quaternary Carbons']:
 
-                if prop_name not in PK_CLASSIFICATION_DICT.keys():
-                    row[prop_name] = round(float(pred_proba[:-1]) / 100.0, int(options["precision"])) if INVERSE_CLASS_DICT[prop_name][pred] == 0 \
+                if prop_name in ASSAY_LIABILITIES:
+                    print(INVERSE_CLASS_DICT[prop_name][pred])
+                    row[prop_name] = round(float(pred_proba[:-1]) / 100.0, int(options["precision"])) if INVERSE_CLASS_DICT[prop_name][pred] == 1 \
                         else round(1 - (float(pred_proba[:-1]) / 100.0), int(options["precision"]))
                 else:
                     row[prop_name] = pred
