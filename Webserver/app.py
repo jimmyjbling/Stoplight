@@ -33,6 +33,11 @@ def score_description():
     return render_template('score_cutoffs.html')
 
 
+@app.route('/citations')
+def citations():
+    return render_template('citations.html')
+
+
 @app.route('/endpoints', methods=['GET'])
 def mol_properties():
     print("endpoints")

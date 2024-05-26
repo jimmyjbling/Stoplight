@@ -62,6 +62,14 @@
         }
     </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('openPopup').addEventListener('click', function () {
+                window.open('/citations', 'Citation', 'width=600,height=600');
+            });
+        });
+    </script>
+
 
 </head>
 <body data-new-gr-c-s-check-loaded="8.904.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="8.904.0">
@@ -70,7 +78,7 @@
             <img src="./static/logo_main_large_text2.png" alt="" style="float: left; height: 100px; padding: 5px;">
             <h1 class="display-4" id="title" style="vertical-align: middle; line-height: 100px;">STOPLIGHT: A Hit Scoring Calculator</h1>
         </div>
-        <p style="font-size: 20px">This is an online web portal to score and predict compound properties for use in filtering small chemical datasets for drug-likeness, as outlined in <a href="https://chemrxiv.org/engage/chemrxiv/article-details/64e5333e3fdae147faa01202">our paper</a>. To use, enter SMILE in the box below, or draw a compound and hit load SMILES, then click "Get Properties". Results will appear below. You can choose the desired properties below in the option sidebar. You can find an offline program for STOPLIGHT <a href="https://github.com/jimmyjbling/Stoplight">here</a>.</p>
+        <p style="font-size: 20px">This is an online web portal to score and predict compound properties for use in filtering small chemical datasets for drug-likeness, as outlined in <a href="https://pubs.acs.org/doi/10.1021/acs.jcim.4c00412" target="_blank">our paper</a>. To use, enter SMILE in the box below, or draw a compound and hit load SMILES, then click "Get Properties". Results will appear below. You can choose the desired properties below in the option sidebar. You can find an offline program for STOPLIGHT <a href="https://github.com/jimmyjbling/Stoplight">here</a>.</p>
         <div id="forms-wrapper">
             <div id="desc-wrapper">
                 <div>
@@ -121,6 +129,8 @@
                 <div class="hidden loading-wrapper" style="text-align: center;"><img src="/static/loading_image.gif" alt="LOADING..."></div>
             </div>
             <div class="options-wrapper">
+                <div><p style="text-align: center">If you use STOPLIGHT please cite our work:</p></div><div style="text-align:center;"><input id="openPopup" type="button" value="See citations" onclick="doFunction();"/></div>
+                <div><p></p></div>
                 <div id="JME"></div>
                 <div class="options-sidebar" style="overflow-y:scroll; height: 600px">
                     <div class="options-icons">
